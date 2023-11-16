@@ -15,6 +15,28 @@ app.use(express.json());
    Input: { username: 'admin', password: 'pass' }
    Output: { message: 'Admin created successfully', token: 'jwt_token_here' }
  */
+const secretKey = "pingpong";
+const generateJwt = (user) => {
+  const payload = { username: user.username };
+  return jwt.sign(payload, secretKey, { expiresIn: "1h" });
+};
+
+const authenticateJwt = (req, res, next) => {
+  const authHeader = req.headers.authorization;
+
+  if (authHeader) {
+    const token = authHeader.split(" ")[1];
+    jwt.verify(token, secretKey, (err, user) => {
+      if (err) {
+        return res.sendStatus(403);
+      }
+      req.user = user;
+      next();
+    });
+  } else {
+    res.sendStatus(401);
+  }
+};
 
 app.post("/admin/signup", (req, res) => {
   const new_admin = {
@@ -22,9 +44,7 @@ app.post("/admin/signup", (req, res) => {
     username: req.body.username,
     password: req.body.password,
   };
-  const jwt_token = jwt.sign({ userId: new_admin.id }, "secret key", {
-    expiresIn: "1h",
-  });
+  const jwt_token = generateJwt(new_admin);
   fs.readFile("files/admin.json", "utf-8", (err, data) => {
     if (err) throw err;
     const admins = JSON.parse(data);
@@ -54,9 +74,7 @@ app.post("/admin/login", (req, res) => {
         admin.username === req.body.username &&
         admin.password === req.body.password
     );
-    const jwt_token = jwt.sign({ userId: admin.id }, "secret key", {
-      expiresIn: "1h",
-    });
+    const jwt_token = generateJwt(admin);
     if (admin) {
       res.send({
         message: "Logged in successfully",
@@ -72,19 +90,23 @@ app.post("/admin/login", (req, res) => {
    Input: Headers: { 'Authorization': 'Bearer jwt_token_here' }, Body: { title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com', published: true }
    Output: { message: 'Course created successfully', courseId: 1 }
  */
-app.post("/admin/courses", (req, res) => {
-  const new_course = {
-    id: Math.floor(Math.random() * 1000000),
-    title: req.body.title,
-    description: req.body.description,
-    price: req.body.price,
-    imageLink: req.body.imageLink,
-    published: req.body.published,
-  };
+app.post("/admin/courses", authenticateJwt, (req, res) => {
+  // const new_course = {
+  //   id: Math.floor(Math.random() * 1000000),
+  //   title: req.body.title,
+  //   description: req.body.description,
+  //   price: req.body.price,
+  //   imageLink: req.body.imageLink,
+  //   published: req.body.published,
+  // };
+
+  const new_course = req.body;
+  new_course.id = Math.floor(Math.random() * 1000000);
 
   fs.readFile("files/course.json", "utf-8", (err, data) => {
     if (err) throw err;
     const courses = JSON.parse(data);
+
     courses.push(new_course);
 
     fs.writeFile("files/course.json", JSON.stringify(courses), (err) => {
@@ -104,25 +126,30 @@ app.post("/admin/courses", (req, res) => {
    Output: { message: 'Course updated successfully' }
  */
 
-app.put("/admin/courses/:courseId", (req, res) => {
+app.put("/admin/courses/:courseId", authenticateJwt, (req, res) => {
   const update_courseId = parseInt(req.params.courseId);
 
   fs.readFile("files/course.json", "utf-8", (err, data) => {
     if (err) throw err;
     const courses = JSON.parse(data);
-    const course = courses.find((course) => course.id === update_courseId);
-    if (course) {
-      course.title = req.body.title;
-      course.description = req.body.description;
-      course.price = req.body.price;
-      course.imageLink = req.body.imageLink;
-      course.published = req.body.published;
+    // const course = courses.find((course) => course.id === update_courseId);
+    //if (course) {
+    //   course.title = req.body.title;
+    //   course.description = req.body.description;
+    //   course.price = req.body.price;
+    //   course.imageLink = req.body.imageLink;
+    //   course.published = req.body.published;
+    const courseIndex = courses.findIndex((c) => c.id === update_courseId);
+    if (courseIndex > -1) {
+      const updatedCourse = { ...courses[courseIndex], ...req.body };
+      courses[courseIndex] = updatedCourse;
+
       fs.writeFile("files/course.json", JSON.stringify(courses), (err) => {
         if (err) throw err;
         res.send({ message: "Course updated successfully" });
       });
     } else {
-      res.status(404).send("Not found");
+      res.status(404).send("Course not found");
     }
   });
 });
@@ -134,7 +161,7 @@ app.put("/admin/courses/:courseId", (req, res) => {
    Output: { courses: [ { id: 1, title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com', published: true }, ... ] }
     */
 
-app.get("/admin/courses", (req, res) => {
+app.get("/admin/courses", authenticateJwt, (req, res) => {
   fs.readFile("files/course.json", "utf-8", (err, data) => {
     if (err) throw err;
     const courses = JSON.parse(data);
@@ -165,9 +192,7 @@ app.post("/users/signup", (req, res) => {
       fs.writeFile("files/user.json", JSON.stringify(users), (err) => {
         if (err) throw err;
 
-        const jwt_token = jwt.sign({ userId: new_user.id }, "secret key", {
-          expiresIn: "1h",
-        });
+        const jwt_token = generateJwt(new_user);
         res.send({ message: "User created successfully", token: jwt_token });
       });
     } else {
@@ -189,9 +214,7 @@ app.post("/users/login", (req, res) => {
         user.username === req.headers.username &&
         user.password === req.headers.password
     );
-    const jwt_token = jwt.sign({ userId: user.id }, "secret key", {
-      expiresIn: "1h",
-    });
+    const jwt_token = generateJwt(user);
     if (user) {
       res.send({
         message: "Logged in successfully",
@@ -206,7 +229,7 @@ app.post("/users/login", (req, res) => {
    Description: Lists all the courses.
    Input: Headers: { 'Authorization': 'Bearer jwt_token_here' }
    Output: { courses: [ { id: 1, title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com', published: true }, ... ] }*/
-app.get("/users/courses", (req, res) => {
+app.get("/users/courses", authenticateJwt, (req, res) => {
   fs.readFile("files/course.json", "utf-8", (err, data) => {
     if (err) throw err;
     const courses = JSON.parse(data);
@@ -217,7 +240,7 @@ app.get("/users/courses", (req, res) => {
    Description: Purchases a course. courseId in the URL path should be replaced with the ID of the course to be purchased.
    Input: Headers: { 'Authorization': 'Bearer jwt_token_here' }
    Output: { message: 'Course purchased successfully' }*/
-app.post("/users/courses/:courseId", (req, res) => {
+app.post("/users/courses/:courseId", authenticateJwt, (req, res) => {
   const purchase_id = parseInt(req.params.courseId);
   fs.readFile("files/course.json", "utf-8", (err, data) => {
     if (err) throw err;
@@ -225,21 +248,27 @@ app.post("/users/courses/:courseId", (req, res) => {
     const course_purchased = courses.find(
       (course) => course.id === purchase_id
     );
-
-    fs.readFile("files/purchase.json", "utf-8", (err, data) => {
-      if (err) throw err;
-      const purchase_courses = JSON.parse(data);
-      purchase_courses.push(course_purchased);
-
-      fs.writeFile(
-        "files/purchase.json",
-        JSON.stringify(purchase_courses),
-        (err) => {
-          if (err) throw err;
-          res.send({ message: "Course purchased successfully" });
+    if (course_purchased) {
+      fs.readFile("files/user.json", "utf-8", (err, data) => {
+        if (err) throw err;
+        const users = JSON.parse(data);
+        const user = users.find((u) => u.username === req.user.username);
+        if (user) {
+          if (!user.purchasedCourses) {
+            user.purchasedCourses = [];
+          }
+          user.purchasedCourses.push(course_purchased);
+          fs.writeFile("files/user.json", JSON.stringify(users), (err) => {
+            if (err) throw err;
+            res.send({ message: "Course purchased successfully" });
+          });
+        } else {
+          res.status(403).send({ message: "User not found" });
         }
-      );
-    });
+      });
+    } else {
+      res.status(404).send({ message: "Course not found" });
+    }
   });
 });
 
@@ -247,11 +276,16 @@ app.post("/users/courses/:courseId", (req, res) => {
    Description: Lists all the courses purchased by the user.
    Input: Headers: { 'Authorization': 'Bearer jwt_token_here' }
    Output: { purchasedCourses: [ { id: 1, title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com', published: true }, ... ] }*/
-app.get("/users/purchasedCourses", (req, res) => {
-  fs.readFile("files/purchase.json", "utf-8", (err, data) => {
+app.get("/users/purchasedCourses", authenticateJwt, (req, res) => {
+  fs.readFile("files/user.json", "utf-8", (err, data) => {
     if (err) throw err;
-    const purchased_courses = JSON.parse(data);
-    res.send(purchased_courses);
+    const users = JSON.parse(data);
+    const user = users.find((u) => u.username === req.user.username);
+    if (user && user.purchasedCourses) {
+      res.json({ purchasedCourses: user.purchasedCourses });
+    } else {
+      res.status(404).json({ message: "No courses purchased" });
+    }
   });
 });
 app.listen(PORT, () => {

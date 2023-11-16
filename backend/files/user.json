@@ -1,1 +1,1 @@
-[{"id":819791,"username":"user","password":"pass"},{"id":485305,"username":"naga","password":"ping"}]
+[{"id":819791,"username":"user","password":"pass"},{"id":485305,"username":"naga","password":"ping"},{"id":489359,"username":"anaya","password":"ping","purchasedCourses":[{"title":"React Advanced","description":"About React Redux","price":800,"imageLink":"https://linktoimageReact.com","published":false,"id":133815},{"title":"React","description":"About React hooks","price":500,"imageLink":"https://linktoimageReact.com","published":false,"id":205956}]}]
