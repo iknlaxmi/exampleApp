@@ -5,8 +5,10 @@ const jwt = require("jsonwebtoken");
 const bodyParser = require("body-parser");
 const fs = require("fs");
 const mongoose = require("mongoose");
+const cors = require("cors");
 
 app.use(express.json());
+app.use(cors());
 
 //Define mongoose schemas
 const userSchema = new mongoose.Schema({
@@ -52,6 +54,7 @@ const generateJwt = (user) => {
 
 const authenticateJwt = (req, res, next) => {
   const authHeader = req.headers.authorization;
+  console.log(req.headers);
 
   if (authHeader) {
     const token = authHeader.split(" ")[1];
@@ -90,6 +93,7 @@ app.post("/admin/signup", async (req, res) => {
  */
 app.post("/admin/login", async (req, res) => {
   const { username, password } = req.headers;
+  console.log(req.headers);
   const admin = await Admin.findOne({ username, password });
   if (admin) {
     const token = jwt.sign({ username, role: "admin" }, SECRET, {
