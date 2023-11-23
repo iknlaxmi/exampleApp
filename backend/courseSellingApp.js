@@ -191,6 +191,14 @@ app.get("/users/courses", authenticateJwt, async (req, res) => {
   const courses = await Course.find({ published: true });
   res.json({ courses });
 });
+/*GET /users/courses/:courseId
+   Description: Lists all the courses.
+   Input: Headers: { 'Authorization': 'Bearer jwt_token_here' }
+   Output:  { id: 1, title: 'course title', description: 'course description', price: 100, imageLink: 'https://linktoimage.com', published: true }*/
+app.get("/users/courses/:courseId", authenticateJwt, async (req, res) => {
+  const course = await Course.findById(req.params.courseId);
+  res.json({ course });
+});
 /*POST /users/courses/:courseId
    Description: Purchases a course. courseId in the URL path should be replaced with the ID of the course to be purchased.
    Input: Headers: { 'Authorization': 'Bearer jwt_token_here' }
