@@ -4,7 +4,7 @@
   "description": "",
   "main": "courseSellingApp.js",
   "scripts": {
-    "start": "nodemon courseSellingApp.js"
+    "start": "nodemon index.js"
   },
   "keywords": [],
   "author": "",
