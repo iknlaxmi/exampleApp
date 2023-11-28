@@ -2,6 +2,7 @@ import { useState, useEffect, useContext } from "react";
 import { Link } from "react-router-dom";
 import ShowCourses from "./ShowCourses";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 import LoginDataContext from "./LoginDataContext";
 
@@ -17,46 +18,43 @@ const Login = () => {
   const [showPurchasedCourses, setShowPurchasedCourses] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async () => {
-    try {
-      const headers = {
-        "Content-Type": "application/json",
+  const handleLogin = () => {
+    const headers = {
+      "Content-Type": "application/json",
 
-        "username": email,
-        "password": password,
-      };
+      "username": email,
+      "password": password,
+    };
 
-      const response = await fetch("http://localhost:3000/users/login", {
-        method: "POST",
+    axios
+      .post("http://localhost:3000/users/login", {
         headers: headers,
+      })
+      .then((response) => {
+        const responseData = response.data;
+        setIsLoginSuccess(true);
+        setToken(responseData.token);
+        localStorage.setItem(email, responseData.token);
+        setLoading(true);
+        console.log(response);
+      })
+      .catch((error) => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.error("Response data:", error.response.data);
+          console.error("Response status:", error.response.status);
+          console.error("Response headers:", error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error("No response received:", error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error("Error setting up the request:", error.message);
+        }
+
+        console.error("Error config:", error.config);
       });
-
-      if (!response.ok) {
-        throw new Error(`HTTP Error status:${response.status}`);
-      }
-      const responseData = await response.json();
-      setIsLoginSuccess(true);
-      setToken(responseData.token);
-      localStorage.setItem(email, responseData.token);
-      setLoading(true);
-      console.log(responseData);
-    } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error("Response data:", error.response.data);
-        console.error("Response status:", error.response.status);
-        console.error("Response headers:", error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error("No response received:", error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Error setting up the request:", error.message);
-      }
-
-      console.error("Error config:", error.config);
-    }
   };
 
   const handleShowAllCouses = () => {

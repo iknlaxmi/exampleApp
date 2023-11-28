@@ -1,6 +1,7 @@
 import { useState, useEffect, useContext } from "react";
 import { useParams } from "react-router-dom";
 import LoginDataContext from "./LoginDataContext";
+import axios from "axios";
 const CourseDetails = () => {
   const params = useParams();
 
@@ -19,49 +20,43 @@ const CourseDetails = () => {
   //   setSingleCourse(courseData);
   // }, [params]);
 
-  const fetchCourses = async () => {
-    try {
-      const headers = {
-        "Content-Type": "application/json",
+  const fetchCourses = () => {
+    const headers = {
+      "Content-Type": "application/json",
 
-        "Authorization": `Bearer ${token}`,
-      };
-      const response = await fetch(
-        `http://localhost:3000/users/courses/${params.id}`,
-        {
-          method: "GET",
-          headers: headers,
-        }
-      );
-      if (!response.ok) throw new Error(`HTTP Error status ${response.status}`);
-      const responseData = await response.json();
-      console.log(responseData);
-      setCourse(responseData.course);
-    } catch (error) {
-      console.log(error);
-    }
+      "Authorization": `Bearer ${token}`,
+    };
+    axios
+      .get(`http://localhost:3000/users/courses/${params.id}`, {
+        headers: headers,
+      })
+      .then((response) => {
+        const responseData = response.data;
+        console.log(responseData);
+        setCourse(responseData.course);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
-  const handlePurchase = async () => {
-    try {
-      const headers = {
-        "Content-Type": "application/json",
+  const handlePurchase = () => {
+    const headers = {
+      "Content-Type": "application/json",
 
-        "Authorization": `Bearer ${token}`,
-      };
-      const response = await fetch(
-        `http://localhost:3000/users/courses/${params.id}`,
-        {
-          method: "POST",
-          headers: headers,
-        }
-      );
-      if (!response.ok) throw new Error(`HTTP Error status ${response.status}`);
-      const responseData = await response.json();
-      console.log(responseData);
-    } catch (error) {
-      console.log(error);
-    }
+      "Authorization": `Bearer ${token}`,
+    };
+    axios
+      .post(`http://localhost:3000/users/courses/${params.id}`, {
+        headers: headers,
+      })
+      .then((response) => {
+        const responseData = response.data;
+        console.log(responseData);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
 
   return (

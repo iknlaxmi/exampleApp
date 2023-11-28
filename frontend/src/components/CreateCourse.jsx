@@ -1,4 +1,5 @@
 import React from "react";
+import axios from "axios";
 /// You need to add input boxes to take input for users to create a course.
 /// I've added one input so you understand the api to do it.
 function CreateCourse({ token, handleCourseAdded }) {
@@ -9,7 +10,7 @@ function CreateCourse({ token, handleCourseAdded }) {
   const [published, setPublished] = React.useState(false);
   const [isCourseAdded, setIsCourseAdded] = React.useState(false);
 
-  const handleCreateCourseButton = async () => {
+  const handleCreateCourseButton = () => {
     const new_course = {
       title: title,
       description: description,
@@ -17,40 +18,43 @@ function CreateCourse({ token, handleCourseAdded }) {
       imageLink: imageLink,
       published: published,
     };
-    try {
-      const headers = {
-        "Content-Type": "Application/json",
-        "Authorization": `Bearer ${token}`,
-      };
-      const response = await fetch(
+
+    const headers = {
+      "Content-Type": "Application/json",
+      "Authorization": `Bearer ${token}`,
+    };
+    axios
+      .post(
         "http://localhost:3000/admin/courses",
+        new_course,
 
-        { method: "POST", headers: headers, body: JSON.stringify(new_course) }
-      );
+        { headers: headers }
+      )
+      .then((response) => {
+        // if (!response.ok) {
+        //   throw new Error(`HTTP Error status:${response.status}`);
+        // }
+        const responseData = response.data;
+        handleCourseAdded(true);
+        console.log(response);
+      })
+      .catch((error) => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.error("Response data:", error.response.data);
+          console.error("Response status:", error.response.status);
+          console.error("Response headers:", error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error("No response received:", error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error("Error setting up the request:", error.message);
+        }
 
-      if (!response.ok) {
-        throw new Error(`HTTP Error status:${response.status}`);
-      }
-      const responseData = await response.json();
-      handleCourseAdded(true);
-      console.log(responseData);
-    } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error("Response data:", error.response.data);
-        console.error("Response status:", error.response.status);
-        console.error("Response headers:", error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error("No response received:", error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Error setting up the request:", error.message);
-      }
-
-      console.error("Error config:", error.config);
-    }
+        console.error("Error config:", error.config);
+      });
   };
 
   return (

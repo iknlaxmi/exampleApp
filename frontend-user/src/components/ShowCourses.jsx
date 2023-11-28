@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from "react";
 import LoginDataContext from "./LoginDataContext";
 import { useNavigate } from "react-router-dom";
 import CourseDetails from "./CourseDetails";
+import axios from "axios";
 const ShowCourses = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
@@ -13,24 +14,24 @@ const ShowCourses = () => {
     fetchCourses();
   }, []);
 
-  const fetchCourses = async () => {
-    try {
-      const headers = {
-        "Content-Type": "application/json",
+  const fetchCourses = () => {
+    const headers = {
+      "Content-Type": "application/json",
 
-        "Authorization": `Bearer ${token}`,
-      };
-      const response = await fetch("http://localhost:3000/users/courses", {
-        method: "GET",
+      "Authorization": `Bearer ${token}`,
+    };
+    axios
+      .get("http://localhost:3000/users/courses", {
         headers: headers,
+      })
+      .then((response) => {
+        const responseData = response.data;
+        console.log(responseData);
+        setCourses(responseData.courses);
+      })
+      .catch((error) => {
+        console.log(error);
       });
-      if (!response.ok) throw new Error(`HTTP Error status ${response.status}`);
-      const responseData = await response.json();
-      console.log(responseData);
-      setCourses(responseData.courses);
-    } catch (error) {
-      console.log(error);
-    }
   };
   //show single course page
   const handleSingleCourse = (id) => {

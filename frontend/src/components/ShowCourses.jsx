@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import axios from "axios";
 
 function ShowCourses({ token, courseAdded }) {
   const [courses, setCourses] = React.useState([]);
@@ -8,23 +9,23 @@ function ShowCourses({ token, courseAdded }) {
   useEffect(() => {
     fetchCourses();
   }, [courseAdded]);
-  const fetchCourses = async () => {
-    try {
-      const headers = {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}`,
-      };
-      const response = await fetch("http://localhost:3000/admin/courses", {
-        method: "GET",
+  const fetchCourses = () => {
+    const headers = {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    };
+    axios
+      .get("http://localhost:3000/admin/courses", {
         headers: headers,
+      })
+      .then((response) => {
+        const responseData = response.data;
+        setCourses([...responseData]);
+        console.log(responseData);
+      })
+      .catch((error) => {
+        console.log(error);
       });
-
-      const responseData = await response.json();
-      setCourses([...responseData]);
-      console.log(responseData);
-    } catch (error) {
-      console.log(error);
-    }
   };
   return (
     <div>

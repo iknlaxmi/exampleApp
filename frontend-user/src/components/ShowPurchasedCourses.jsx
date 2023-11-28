@@ -1,5 +1,6 @@
 import { useContext, useState, useEffect } from "react";
 import LoginDataContext from "./LoginDataContext";
+import axios from "axios";
 const ShowPurchasedCourses = () => {
   const { token } = useContext(LoginDataContext);
   console.log("token:", token);
@@ -9,27 +10,24 @@ const ShowPurchasedCourses = () => {
     fetchCourses();
   }, []);
 
-  const fetchCourses = async () => {
-    try {
-      const headers = {
-        "Content-Type": "application/json",
+  const fetchCourses = () => {
+    const headers = {
+      "Content-Type": "application/json",
 
-        "Authorization": `Bearer ${token}`,
-      };
-      const response = await fetch(
-        "http://localhost:3000/users/purchasedCourses",
-        {
-          method: "GET",
-          headers: headers,
-        }
-      );
-      if (!response.ok) throw new Error(`HTTP Error status ${response.status}`);
-      const responseData = await response.json();
-      console.log(responseData);
-      setPurchasedCourses(responseData.purchasedCourses);
-    } catch (error) {
-      console.log(error);
-    }
+      "Authorization": `Bearer ${token}`,
+    };
+    axios
+      .get("http://localhost:3000/users/purchasedCourses", {
+        headers: headers,
+      })
+      .then((response) => {
+        const responseData = response.data;
+        console.log(responseData);
+        setPurchasedCourses(responseData.purchasedCourses);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   };
   return (
     <>

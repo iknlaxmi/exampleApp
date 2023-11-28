@@ -18,44 +18,50 @@ function Login() {
     localStorage.removeItem(email);
     setIsLoginSuccess(false);
   };
-  const handleLogin = async () => {
-    try {
-      const headers = {
-        "Content-Type": "application/json",
+  const handleLogin = () => {
+    const headers = {
+      "Content-Type": "application/json",
 
-        "username": email,
-        "password": password,
-      };
+      "username": email,
+      "password": password,
+    };
 
-      const response = await fetch("http://localhost:3000/admin/login", {
-        method: "POST",
+    axios
+      .post("http://localhost:3000/admin/login", {
         headers: headers,
+      })
+      .then((response) => {
+        console.log(response);
+        const responseData = response.data;
+        setIsLoginSuccess(true);
+        setToken(responseData.token);
+        console.log(responseData);
+      })
+      .catch((error) => {
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          console.error("Response data:", error.response.data);
+          console.error("Response status:", error.response.status);
+          console.error("Response headers:", error.response.headers);
+        } else if (error.request) {
+          // The request was made but no response was received
+          console.error("No response received:", error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          console.error("Error setting up the request:", error.message);
+        }
+
+        console.error("Error config:", error.config);
       });
 
-      if (!response.ok) {
-        throw new Error(`HTTP Error status:${response.status}`);
-      }
-      const responseData = await response.json();
-      setIsLoginSuccess(true);
-      setToken(responseData.token);
-      console.log(responseData);
-    } catch (error) {
-      if (error.response) {
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        console.error("Response data:", error.response.data);
-        console.error("Response status:", error.response.status);
-        console.error("Response headers:", error.response.headers);
-      } else if (error.request) {
-        // The request was made but no response was received
-        console.error("No response received:", error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        console.error("Error setting up the request:", error.message);
-      }
-
-      console.error("Error config:", error.config);
-    }
+    // if (!response.ok) {
+    //   throw new Error(`HTTP Error status:${response.status}`);
+    // }
+    // const responseData = await response.json();
+    // setIsLoginSuccess(true);
+    // setToken(responseData.token);
+    // console.log(responseData);
   };
 
   return (

@@ -1,26 +1,31 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async () => {
-    try {
-      const headers = {
-        "Content-Type": "application/json",
-      };
-      const response = await fetch("http://localhost:3000/users/signup", {
-        method: "POST",
-        headers: headers,
-        body: JSON.stringify({ username: email, password: password }),
+  const handleSubmit = () => {
+    const headers = {
+      "Content-Type": "application/json",
+    };
+    axios
+      .post(
+        "http://localhost:3000/users/signup",
+        { username: email, password: password },
+        {
+          headers: headers,
+        }
+      )
+      .then((response) => {
+        const responseData = response.data;
+        console.log(responseData);
+        localStorage.setItem(email, responseData.token);
+      })
+      .catch((error) => {
+        console.error("POST ERROR", error);
       });
-      const responseData = await response.json();
-      console.log(responseData);
-      localStorage.setItem(email, responseData.token);
-    } catch (error) {
-      console.error("POST ERROR", error);
-    }
   };
 
   return (

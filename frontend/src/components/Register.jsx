@@ -6,18 +6,19 @@ function Register() {
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = useState("");
 
-  const handleSubmit = async () => {
-    try {
-      const response = await axios.post("http://localhost:3000/admin/signup", {
+  const handleSubmit = () => {
+    axios
+      .post("http://localhost:3000/admin/signup", {
         username: email,
         password: password,
+      })
+      .then((response) => {
+        console.log(response.data);
+        localStorage.setItem(email, response.data.token);
+      })
+      .catch((error) => {
+        console.error("POST ERROR", error);
       });
-
-      console.log(response.data);
-      localStorage.setItem(email, response.data.token);
-    } catch (error) {
-      console.error("POST ERROR", error);
-    }
   };
 
   return (

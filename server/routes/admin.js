@@ -47,8 +47,8 @@ router.post("/signup", async (req, res) => {
    Output: { message: 'Logged in successfully', token: 'jwt_token_here' }
  */
 router.post("/login", async (req, res) => {
-  const { username, password } = req.headers;
-  console.log(req.headers);
+  const { username, password } = req.body.headers;
+  console.log(req);
   const admin = await Admin.findOne({ username, password });
   if (admin) {
     const token = jwt.sign({ username, role: "admin" }, SECRET, {
@@ -68,6 +68,7 @@ router.post("/login", async (req, res) => {
  */
 router.post("/courses", authenticateJwt, async (req, res) => {
   const course = new Course(req.body);
+  console.log(req.body);
   await course.save();
 
   res.json({ message: "Course created successfully", courseId: course.id });
