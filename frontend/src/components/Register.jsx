@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import NavBar from "./NavBar";
 
 /// File is incomplete. You need to add input boxes to take input for users to register.
 function Register() {
@@ -23,21 +24,34 @@ function Register() {
 
   return (
     <div>
-      <h1>Register to the website</h1>
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          handleSubmit();
-        }}
-      >
-        <br />
-        <input type={"text"} onChange={(e) => setEmail(e.target.value)} />
-        <br />
-        <input type={"text"} onChange={(e) => setPassword(e.target.value)} />
-        <br />
-        <button type="submit">Submit</button>
-      </form>
-      Already a user? <a href="/login">Login</a>
+      <NavBar />
+
+      <div className="h-screen w-full flex justify-center items-center">
+        <h1>Register to the website</h1>
+        <div className="flex border-blue-400 rounded border-2 w-96 h-96">
+          <div>
+            {" "}
+            <input
+              className="border-2"
+              type={"text"}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </div>
+          <div>
+            {" "}
+            <input
+              className="border-2"
+              type={"text"}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </div>
+          <div>
+            {" "}
+            <button onClick={handleSubmit}>Submit</button>
+          </div>
+          Already a user? <a href="/login">Login</a>
+        </div>
+      </div>
     </div>
   );
 }
