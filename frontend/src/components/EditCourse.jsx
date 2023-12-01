@@ -10,9 +10,9 @@ import {
 } from "@material-tailwind/react";
 import NavBarAfterLogin from "./NavBarAfterLogin";
 import { useLocation } from "react-router-dom";
-function CreateCourse() {
+const EditCourse = () => {
   const location = useLocation();
-  const { email } = location.state;
+  const { course, email } = location.state;
   console.log(location.state, email);
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
@@ -24,11 +24,11 @@ function CreateCourse() {
   const handleAddCourseButton = (e) => {
     e.preventDefault();
     const new_course = {
-      title: title,
-      description: description,
-      price: price,
-      imageLink: imageLink,
-      published: published,
+      title: title || course.title,
+      description: description || course.description,
+      price: price || course.price,
+      imageLink: imageLink || course.imageLink,
+      published: published || course.published,
     };
     console.log(localStorage.getItem(email));
     const headers = {
@@ -36,8 +36,8 @@ function CreateCourse() {
       "Authorization": `Bearer ${localStorage.getItem(email)}`,
     };
     axios
-      .post(
-        "http://localhost:3000/admin/courses",
+      .put(
+        `http://localhost:3000/admin/courses/${course._id}`,
         new_course,
 
         { headers: headers }
@@ -69,7 +69,6 @@ function CreateCourse() {
         console.error("Error config:", error.config);
       });
   };
-
   return (
     <>
       <NavBarAfterLogin email={location.state} />
@@ -79,7 +78,7 @@ function CreateCourse() {
         className="flex items-center justify-center  mt-4 lg:mt-6"
       >
         <Typography variant="h4" color="blue-gray">
-          Add New Course
+          Update Course
         </Typography>
 
         <form
@@ -93,6 +92,7 @@ function CreateCourse() {
             <Input
               size="lg"
               placeholder="Title"
+              defaultValue={course.title}
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               onChange={(e) => setTitle(e.target.value)}
               labelProps={{
@@ -105,6 +105,7 @@ function CreateCourse() {
             <Input
               size="lg"
               placeholder="Description"
+              defaultValue={course.description}
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
               onChange={(e) => setDescription(e.target.value)}
               labelProps={{
@@ -118,6 +119,7 @@ function CreateCourse() {
               size="lg"
               placeholder="Price"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              defaultValue={course.price}
               onChange={(e) => setPrice(e.target.value)}
               labelProps={{
                 className: "before:content-none after:content-none",
@@ -130,6 +132,7 @@ function CreateCourse() {
               size="lg"
               placeholder="Image Link"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              defaultValue={course.imageLink}
               onChange={(e) => setImageLink(e.target.value)}
               labelProps={{
                 className: "before:content-none after:content-none",
@@ -142,6 +145,7 @@ function CreateCourse() {
               size="lg"
               placeholder="true/false"
               className=" !border-t-blue-gray-200 focus:!border-t-gray-900"
+              defaultValue={course.published}
               onChange={(e) => setPublished(e.target.value)}
               labelProps={{
                 className: "before:content-none after:content-none",
@@ -150,11 +154,11 @@ function CreateCourse() {
           </div>
 
           <Button type="submit" className="mt-6" fullWidth>
-            ADD
+            UPDATE
           </Button>
         </form>
       </Card>
     </>
   );
-}
-export default CreateCourse;
+};
+export default EditCourse;
