@@ -9,8 +9,11 @@ import {
 import { useState } from "react";
 import { Navigate } from "react-router-dom";
 import { Link } from "react-router-dom";
+import { emailState } from "./Login";
+import { useRecoilValue } from "recoil";
 
-function CourseCard({ course, email }) {
+function CourseCard({ course }) {
+  const email = useRecoilValue(emailState);
   return (
     <Card className="mt-6 ml-8 mb-16 w-80 md:ml-14 lg:ml-28">
       <CardHeader color="blue-gray" className=" h-56 sm:h-48">

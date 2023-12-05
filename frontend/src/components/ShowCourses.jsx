@@ -1,21 +1,15 @@
 import React, { useEffect } from "react";
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+
 import CourseCard from "./CourseCard";
 import NavBarAfterLogin from "./NavBarAfterLogin";
+import { emailState } from "./Login";
+import { useRecoilValue } from "recoil";
 
 function ShowCourses() {
   const [courses, setCourses] = React.useState([]);
-  const location = useLocation();
-
-  // const email = location.state;
-  console.log(typeof location.state);
-  let email;
-  if (typeof location.state === "object") {
-    email = location.state.email;
-  } else {
-    email = location.state;
-  }
+  const email = useRecoilValue(emailState);
+  console.log("show course email:", email);
   // Add code to fetch courses from the server
   // and set it in the courses state variable.
   useEffect(() => {
@@ -42,13 +36,13 @@ function ShowCourses() {
   return (
     <div>
       {/* <CourseCard /> */}
-      <NavBarAfterLogin email={email} />
+      <NavBarAfterLogin />
       <h1 className="m-4 text-center p-4 block  text-2xl antialiased font-semibold leading-tight tracking-normal text-inherit">
         LATEST COURSES
       </h1>
       <div className="sm:flex sm:flex-row sm:flex-wrap">
         {courses.map((c) => (
-          <CourseCard course={c} email={email} />
+          <CourseCard course={c} />
         ))}
       </div>
     </div>

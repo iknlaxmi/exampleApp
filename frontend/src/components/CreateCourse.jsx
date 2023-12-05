@@ -10,10 +10,10 @@ import {
 } from "@material-tailwind/react";
 import NavBarAfterLogin from "./NavBarAfterLogin";
 import { useLocation } from "react-router-dom";
+import { emailState } from "./Login";
+import { useRecoilValue } from "recoil";
 function CreateCourse() {
-  const location = useLocation();
-  const { email } = location.state;
-  console.log(location.state, email);
+  const email = useRecoilValue(emailState);
   const [title, setTitle] = React.useState("");
   const [description, setDescription] = React.useState("");
   const [price, setPrice] = React.useState("");
@@ -72,7 +72,7 @@ function CreateCourse() {
 
   return (
     <>
-      <NavBarAfterLogin email={location.state} />
+      <NavBarAfterLogin />
       <Card
         color="transparent"
         shadow={false}

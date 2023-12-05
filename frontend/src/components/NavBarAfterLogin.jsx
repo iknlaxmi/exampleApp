@@ -30,11 +30,7 @@ const NavBarAfterLogin = ({ email }) => {
         color="blue-gray"
         className="p-1 font-bold text-white"
       >
-        <Link
-          to="/add-course"
-          className="flex items-center"
-          state={{ email: email }}
-        >
+        <Link to="/add-course" className="flex items-center">
           Add Course
         </Link>
       </Typography>
@@ -44,7 +40,7 @@ const NavBarAfterLogin = ({ email }) => {
         color="blue-gray"
         className="p-1 font-bold text-white"
       >
-        <Link to="/courses" className="flex items-center" state={email}>
+        <Link to="/courses" className="flex items-center">
           Courses
         </Link>
       </Typography>

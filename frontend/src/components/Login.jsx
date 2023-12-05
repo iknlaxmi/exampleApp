@@ -6,10 +6,17 @@ import NavBar from "./NavBar";
 import registerImage from "../assets/register-image.jpg";
 import { useNavigate } from "react-router-dom";
 import { Navigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { atom } from "recoil";
+
+export const emailState = atom({
+  key: "emailState", // unique ID (with respect to other atoms/selectors)
+  default: "", // default value (aka initial value)
+});
 
 /// File is incomplete. You need to add input boxes to take input for users to login.
 function Login() {
-  const [email, setEmail] = React.useState("");
+  const [email, setEmail] = useRecoilState(emailState);
   const [password, setPassword] = React.useState("");
   const [isLoginSuccess, setIsLoginSuccess] = useState(false);
   const [token, setToken] = useState("");
@@ -112,7 +119,7 @@ function Login() {
         </div>
       ) : (
         <div>
-          <Navigate to="/courses" state={email} replace={true} />
+          <Navigate to="/courses" replace={true} />
         </div>
       )}
     </div>

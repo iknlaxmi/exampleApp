@@ -1,18 +1,21 @@
 import { Button, Typography } from "@material-tailwind/react";
 import { useLocation } from "react-router-dom";
 import NavBarAfterLogin from "./NavBarAfterLogin";
+import { emailState } from "./Login";
+import { useRecoilValue } from "recoil";
 
 const CourseDetails = () => {
   const location = useLocation();
-  const { course, email } = location.state;
+  const { course } = location.state;
+  const email = useRecoilValue(emailState);
 
-  console.log(course, email);
+  console.log(course);
 
   const handleDelete = () => {};
 
   return (
     <>
-      <NavBarAfterLogin email={email} />
+      <NavBarAfterLogin />
       <Typography variant="h5" className="text-center m-4 ">
         {course.title}
       </Typography>
