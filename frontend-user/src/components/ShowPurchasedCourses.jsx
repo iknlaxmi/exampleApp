@@ -1,9 +1,10 @@
 import { useContext, useState, useEffect } from "react";
 import LoginDataContext from "./LoginDataContext";
 import axios from "axios";
+import { useLocation } from "react-router-dom";
 const ShowPurchasedCourses = () => {
-  const { token } = useContext(LoginDataContext);
-  console.log("token:", token);
+  const location = useLocation();
+  const { email } = location.state;
   const [purchasedCourses, setPurchasedCourses] = useState([]);
   //get all courses
   useEffect(() => {
@@ -14,7 +15,7 @@ const ShowPurchasedCourses = () => {
     const headers = {
       "Content-Type": "application/json",
 
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${localStorage.getItem(email)}`,
     };
     axios
       .get("http://localhost:3000/users/purchasedCourses", {

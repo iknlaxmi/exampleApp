@@ -1,14 +1,25 @@
 import React, { useState, useEffect, useContext } from "react";
-import LoginDataContext from "./LoginDataContext";
-import { useNavigate } from "react-router-dom";
+
+import { useNavigate, useLocation } from "react-router-dom";
 import CourseDetails from "./CourseDetails";
+
+import NavBarLogin from "../components/NavBarLogin";
 import axios from "axios";
+import CourseCard from "../components/CourseCard";
 const ShowCourses = () => {
   const navigate = useNavigate();
   const [courses, setCourses] = useState([]);
-  const { token } = useContext(LoginDataContext);
+  const location = useLocation();
 
-  console.log("token: ", token);
+  // const email = location.state;
+  console.log(typeof location.state);
+  let email;
+  if (typeof location.state === "object") {
+    email = location.state.email;
+  } else {
+    email = location.state;
+  }
+
   //get all courses
   useEffect(() => {
     fetchCourses();
@@ -18,7 +29,7 @@ const ShowCourses = () => {
     const headers = {
       "Content-Type": "application/json",
 
-      "Authorization": `Bearer ${token}`,
+      "Authorization": `Bearer ${localStorage.getItem(email)}`,
     };
     axios
       .get("http://localhost:3000/users/courses", {
@@ -38,16 +49,18 @@ const ShowCourses = () => {
     navigate(`/courses/${id}`);
   };
   return (
-    <>
-      <h1>All Courses</h1>
-      {courses.map((course) => {
-        return (
-          <li key={course._id} onClick={() => handleSingleCourse(course._id)}>
-            {course.title}
-          </li>
-        );
-      })}
-    </>
+    <div>
+      {/* <CourseCard /> */}
+      <NavBarLogin email={email} />
+      <h1 className="m-4 text-center p-4 block  text-2xl antialiased font-semibold leading-tight tracking-normal text-inherit">
+        LATEST COURSES
+      </h1>
+      <div className="sm:flex sm:flex-row sm:flex-wrap">
+        {courses.map((c) => (
+          <CourseCard course={c} email={email} />
+        ))}
+      </div>
+    </div>
   );
 };
 export default ShowCourses;
