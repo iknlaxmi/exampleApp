@@ -10,8 +10,11 @@ import {
 import { Navigate, useNavigate } from "react-router-dom";
 import logo from "../assets/logo.png";
 import { Link } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { emailState } from "./Login";
 
-const NavBarLogin = ({ email }) => {
+const NavBarLogin = () => {
+  const email = useRecoilState(emailState);
   const navigate = useNavigate();
   const [openNav, setOpenNav] = React.useState(false);
 
@@ -30,11 +33,7 @@ const NavBarLogin = ({ email }) => {
         color="blue-gray"
         className="p-1 font-bold text-white"
       >
-        <Link
-          to="/courses/purchased"
-          className="flex items-center"
-          state={{ email: email }}
-        >
+        <Link to="/courses/purchased" className="flex items-center">
           My Courses
         </Link>
       </Typography>
@@ -44,7 +43,7 @@ const NavBarLogin = ({ email }) => {
         color="blue-gray"
         className="p-1 font-bold text-white"
       >
-        <Link to="/courses" className="flex items-center" state={email}>
+        <Link to="/courses" className="flex items-center">
           Courses
         </Link>
       </Typography>

@@ -1,10 +1,14 @@
 import { useContext, useState, useEffect } from "react";
-import LoginDataContext from "./LoginDataContext";
+
 import axios from "axios";
-import { useLocation } from "react-router-dom";
+
+import { useRecoilValue } from "recoil";
+import { emailState } from "./Login";
+import NavBarLogin from "../components/NavBarLogin";
+import CourseCard from "../components/CourseCard";
+
 const ShowPurchasedCourses = () => {
-  const location = useLocation();
-  const { email } = location.state;
+  const email = useRecoilValue(emailState);
   const [purchasedCourses, setPurchasedCourses] = useState([]);
   //get all courses
   useEffect(() => {
@@ -32,10 +36,16 @@ const ShowPurchasedCourses = () => {
   };
   return (
     <>
-      <h1>Purchased Courses</h1>
-      {purchasedCourses.map((course) => {
-        return <h3 key={course._id}>{course.title}</h3>;
-      })}
+      <NavBarLogin />
+
+      <h1 className="m-4 text-center p-4 block  text-2xl antialiased font-semibold leading-tight tracking-normal text-inherit">
+        PURCHASED COURSES
+      </h1>
+      <div className="sm:flex sm:flex-row sm:flex-wrap">
+        {purchasedCourses.map((c) => (
+          <CourseCard course={c} />
+        ))}
+      </div>
     </>
   );
 };

@@ -6,19 +6,13 @@ import CourseDetails from "./CourseDetails";
 import NavBarLogin from "../components/NavBarLogin";
 import axios from "axios";
 import CourseCard from "../components/CourseCard";
+import { useRecoilValue } from "recoil";
+import { emailState } from "./Login";
 const ShowCourses = () => {
-  const navigate = useNavigate();
-  const [courses, setCourses] = useState([]);
-  const location = useLocation();
+  const email = useRecoilValue(emailState);
+  console.log("show courses email", email);
 
-  // const email = location.state;
-  console.log(typeof location.state);
-  let email;
-  if (typeof location.state === "object") {
-    email = location.state.email;
-  } else {
-    email = location.state;
-  }
+  const [courses, setCourses] = useState([]);
 
   //get all courses
   useEffect(() => {
@@ -44,20 +38,16 @@ const ShowCourses = () => {
         console.log(error);
       });
   };
-  //show single course page
-  const handleSingleCourse = (id) => {
-    navigate(`/courses/${id}`);
-  };
+
   return (
     <div>
-      {/* <CourseCard /> */}
-      <NavBarLogin email={email} />
+      <NavBarLogin />
       <h1 className="m-4 text-center p-4 block  text-2xl antialiased font-semibold leading-tight tracking-normal text-inherit">
         LATEST COURSES
       </h1>
       <div className="sm:flex sm:flex-row sm:flex-wrap">
         {courses.map((c) => (
-          <CourseCard course={c} email={email} />
+          <CourseCard course={c} />
         ))}
       </div>
     </div>

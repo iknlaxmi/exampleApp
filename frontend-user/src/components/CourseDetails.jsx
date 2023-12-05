@@ -4,9 +4,12 @@ import { Button, Typography } from "@material-tailwind/react";
 import { useLocation } from "react-router-dom";
 import NavBarLogin from "./NavBarLogin";
 import axios from "axios";
+import { emailState } from "./Login";
+import { useRecoilValue } from "recoil";
 const CourseDetails = () => {
   const location = useLocation();
-  const { course, email } = location.state;
+  const email = useRecoilValue(emailState);
+  const { course } = location.state;
 
   console.log(course, email);
 

@@ -5,9 +5,17 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import NavBar from "../components/NavBar";
 import { Navigate } from "react-router-dom";
+import { useRecoilState } from "recoil";
+import { atom } from "recoil";
+
+export const emailState = atom({
+  key: "emailState", // unique ID (with respect to other atoms/selectors)
+  default: "", // default value (aka initial value)
+});
 
 const Login = () => {
-  const [email, setEmail] = useState("");
+  // const [email, setEmail] = useState("");
+  const [email, setEmail] = useRecoilState(emailState);
   const temp = "HELLO";
   const [password, setPassword] = useState("");
   const [isLoginSuccess, setIsLoginSuccess] = useState(false);
@@ -115,7 +123,7 @@ const Login = () => {
         </div>
       ) : (
         <div>
-          <Navigate to="/courses" state={email} replace={true} />
+          <Navigate to="/courses" replace={true} />
         </div>
       )}
     </div>
