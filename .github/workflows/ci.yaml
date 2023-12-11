@@ -19,4 +19,6 @@ jobs:
         run: |
           echo "$SSH_PRIVATE_KEY" > keyfile
           chmod 600 keyfile
+          mkdir -p ~/.ssh
+        cp known_hosts ~/.ssh/known_hosts
           ssh -t -i keyfile ubuntu@34.228.13.165 "sudo bash ~/deploy.sh"
