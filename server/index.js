@@ -16,7 +16,7 @@ app.use(express.json());
 app.use("/admin", adminRouter);
 app.use("/users", userRouter);
 
-app.get("/", (req, res) => res.json({ msg: "hello world" }));
+app.get("/", (req, res) => res.json({ msg: "hello world server" }));
 //connect to mongodb
 mongoose.connect(
   "mongodb+srv://laxmimit:pingpong@cluster0.b31uole.mongodb.net/courses",
